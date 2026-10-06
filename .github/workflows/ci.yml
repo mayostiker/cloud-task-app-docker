@@ -28,3 +28,6 @@ jobs:
 
       - name: Run automated tests
         run: pytest -v
+
+      - name: Build Docker image
+        run: docker build -t cloud-task-app:${{ github.sha }} .
