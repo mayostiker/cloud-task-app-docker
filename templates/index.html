@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Task App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Cloud Task App</h1>
+        <p class="subtitle">Manage your tasks from the cloud.</p>
+
+        <form method="POST" action="/add">
+            <input type="text" name="task" placeholder="Enter a task" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <div class="tasks">
+            {% for task in tasks %}
+            <div class="task">
+                <span>{{ task.title }}</span>
+            </div>
+            {% else %}
+            <p>No tasks yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
