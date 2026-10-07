@@ -55,3 +55,21 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+  deploy:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::377587329790:role/GitHubActionsCloudTaskAppRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to EC2
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh "${{ github.sha }}"
