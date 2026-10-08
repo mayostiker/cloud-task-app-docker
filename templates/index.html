@@ -18,13 +18,21 @@
 
         <div class="tasks">
             {% for task in tasks %}
-            <div class="task">
-                <span>{{ task.title }}</span>
-            </div>
-            {% else %}
-            <p>No tasks yet.</p>
-            {% endfor %}
-        </div>
+         <div class="task {% if task.completed %}completed{% endif %}">
+        <span>{{ task.title }}</span>
+
+        {% if not task.completed %}
+        <form method="POST" action="/complete/{{ task.id }}">
+            <button type="submit">Complete</button>
+        </form>
+        {% else %}
+        <span class="completed-label">Completed</span>
+        {% endif %}
+    </div>
+    {% else %}
+    <p>No tasks yet.</p>
+    {% endfor %}
+</div>
     </div>
 </body>
 </html>

@@ -50,3 +50,23 @@ def test_add_task():
     )
 
     mock_connection.commit.assert_called_once()
+def test_complete_task():
+    mock_connection = MagicMock()
+    mock_cursor = MagicMock()
+
+    mock_connection.cursor.return_value = mock_cursor
+
+    with patch("app.get_connection", return_value=mock_connection):
+        client = app.test_client()
+
+        response = client.post("/complete/1")
+
+    assert response.status_code == 302
+    assert response.headers["Location"] == "/"
+
+    mock_cursor.execute.assert_called_once_with(
+        "UPDATE tasks SET completed = TRUE WHERE id = %s",
+        (1,),
+    )
+
+    mock_connection.commit.assert_called_once()

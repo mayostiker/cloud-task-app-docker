@@ -59,3 +59,12 @@ button {
     background: #f1f3f5;
     border-radius: 6px;
 }
+.task.completed {
+    opacity: 0.65;
+    text-decoration: line-through;
+}
+
+.completed-label {
+    font-size: 14px;
+    font-weight: bold;
+}

@@ -41,6 +41,22 @@ def add_task():
 
     return redirect("/")
 
+@app.route("/complete/<int:task_id>", methods=["POST"])
+def complete_task(task_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "UPDATE tasks SET completed = TRUE WHERE id = %s",
+        (task_id,)
+    )
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
