@@ -57,6 +57,21 @@ def complete_task(task_id):
     connection.close()
 
     return redirect("/")
+@app.route("/delete/<int:task_id>", methods=["POST"])
+def delete_task(task_id):
+    connection = get_connection()
+    cursor = connection.cursor()
 
+    cursor.execute(
+        "DELETE FROM tasks WHERE id = %s",
+        (task_id,)
+    )
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    return redirect("/")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

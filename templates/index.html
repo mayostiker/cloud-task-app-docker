@@ -22,12 +22,16 @@
         <span>{{ task.title }}</span>
 
         {% if not task.completed %}
-        <form method="POST" action="/complete/{{ task.id }}">
-            <button type="submit">Complete</button>
-        </form>
-        {% else %}
-        <span class="completed-label">Completed</span>
-        {% endif %}
+<form method="POST" action="/complete/{{ task.id }}">
+    <button type="submit">Complete</button>
+</form>
+{% else %}
+<span class="completed-label">Completed</span>
+{% endif %}
+
+<form method="POST" action="/delete/{{ task.id }}">
+    <button type="submit">Delete</button>
+</form>
     </div>
     {% else %}
     <p>No tasks yet.</p>
