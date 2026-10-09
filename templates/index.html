@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,32 +12,46 @@
         <h1>Cloud Task App</h1>
         <p class="subtitle">Manage your tasks from the cloud.</p>
 
-        <form method="POST" action="/add">
-            <input type="text" name="task" placeholder="Enter a task" required>
+        <div class="user-bar">
+            <p>Welcome, <strong>{{ session.get('username', 'User') }}</strong>!</p>
+
+            <form method="POST" action="{{ url_for('logout') }}">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+
+        <form method="POST" action="{{ url_for('add_task') }}">
+            <input
+                type="text"
+                name="task"
+                placeholder="Enter a task"
+                maxlength="255"
+                required
+            >
             <button type="submit">Add Task</button>
         </form>
 
         <div class="tasks">
             {% for task in tasks %}
-         <div class="task {% if task.completed %}completed{% endif %}">
-        <span>{{ task.title }}</span>
+                <div class="task {% if task.completed %}completed{% endif %}">
+                    <span>{{ task.title }}</span>
 
-        {% if not task.completed %}
-<form method="POST" action="/complete/{{ task.id }}">
-    <button type="submit">Complete</button>
-</form>
-{% else %}
-<span class="completed-label">Completed</span>
-{% endif %}
+                    {% if not task.completed %}
+                        <form method="POST" action="{{ url_for('complete_task', task_id=task.id) }}">
+                            <button type="submit">Complete</button>
+                        </form>
+                    {% else %}
+                        <span class="completed-label">Completed</span>
+                    {% endif %}
 
-<form method="POST" action="/delete/{{ task.id }}">
-    <button type="submit">Delete</button>
-</form>
-    </div>
-    {% else %}
-    <p>No tasks yet.</p>
-    {% endfor %}
-</div>
+                    <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>No tasks yet. Add your first task above!</p>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
