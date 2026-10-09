@@ -36,7 +36,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run automated tests
+        env:
+          SECRET_KEY: ci-test-only-secret-key-not-for-production
         run: pytest -v
+
 
       - name: Configure AWS credentials
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
