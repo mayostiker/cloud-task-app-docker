@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
-  
+      - module-6-capstone
+  pull_request:
+    branches:
+      - main
+
 permissions:
   contents: read
   id-token: write
@@ -32,19 +36,25 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run automated tests
+        env:
+          SECRET_KEY: ci-test-only-secret-key-not-for-production
         run: pytest -v
 
+
       - name: Configure AWS credentials
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::377587329790:role/GitHubActionsCloudTaskAppRole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker build \
             -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
@@ -52,11 +62,14 @@ jobs:
             .
 
       - name: Push Docker image to Amazon ECR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
   deploy:
     needs: test-and-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
